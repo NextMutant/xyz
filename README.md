@@ -1,7 +1,5 @@
 # AI-Native Mini CRM
 
-> Built for Xeno Engineering take-home assignment.
-
 ---
 
 ## Problem Statement
