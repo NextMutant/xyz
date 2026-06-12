@@ -1,0 +1,106 @@
+# CRM Backend Service
+
+The **CRM Backend** is the core operational engine of the Xeno AI-Native Mini CRM project. 
+
+It is built as a robust, decoupled Express application that manages all database interactions, asynchronous background job queuing, and communication with Google's Generative AI.
+
+## 🎯 Purpose
+Unlike traditional simple CRUD apps, this backend is built for scale. It handles generating dynamic Prisma queries from AI prompts, executing mass communication dispatches without blocking the main Node.js event loop, and processing high volumes of incoming webhook telemetry.
+
+## 🏗 Architecture & Core Modules
+
+### 1. The Database Layer (Prisma + PostgreSQL)
+- All schema logic is strictly typed and managed via Prisma (`prisma/schema.prisma`).
+- Includes comprehensive models for `Customer`, `Segment`, `Campaign`, `Communication`, `Event`, and `CampaignStats`.
+- Provides atomic updates (e.g., upserting campaign delivery statistics as webhooks stream in).
+
+### 2. The AI Service (`services/ai.service.ts`)
+Acts as the central gateway to Google's Gemini API (utilizing `gemini-2.5-flash`). It exposes heavily typed, schema-enforced functions:
+- **`generateSegmentFilter`**: Converts natural language into a valid Prisma JSON object.
+- **`generateCampaignMessage`**: Generates 3 distinct personalized copy variants (A/B/C) based on segment descriptions.
+- **`recommendChannel`**: Evaluates segment data to recommend SMS, Email, or WhatsApp.
+- **`analyzeSentiment`**: Intercepts customer reply text and classifies intent (e.g., `OPT_OUT`).
+- **`generateABTestInsight`**: Analyzes the mathematical winner of an A/B test and explains its success.
+- **`generateCampaignInsight`**: Analyzes final delivery metrics to generate a 1-sentence executive summary.
+- *Graceful Degradation*: Every AI function implements a safe `catch` block that returns predictable fallback data if the API rate-limits (503) or the key is missing.
+
+### 3. The Queueing Engine (BullMQ + Redis)
+To prevent the main API thread from locking up during mass dispatches or heavy webhook traffic, all heavy lifting is pushed to background workers:
+- **`dispatch-queue`**: When a campaign launches, customer communications are queued here. A worker processes this queue and pushes requests to the external Channel Simulator.
+- **`ab-test-queue`**: Used for delaying A/B test evaluations. A worker fires after 15 seconds, calculates scores for Variant A/B/C, selects the winner, and launches the remaining dispatch.
+- **`callback-queue`**: The Channel Simulator fires lifecycle webhooks (`DELIVERED`, `OPENED`, `FAILED`, `REPLIED`) to the CRM. The CRM immediately drops the webhook into this queue (returning a fast `200 OK`) and a worker updates the database asynchronously.
+- **`insights-queue`**: Once a campaign completes, a job is queued here to trigger the AI analysis worker.
+- **Bull Board**: A live UI to monitor queues is mounted at `/admin/queues`.
+
+## 🚀 Tech Stack
+- **Node.js** & **Express**
+- **TypeScript**
+- **PostgreSQL** (Database)
+- **Prisma** (ORM)
+- **Redis** & **BullMQ** (Job Queues)
+- **Google Generative AI SDK**
+
+## 🛠 Recent Optimizations & Features
+- **Autonomous A/B Testing Worker**: Added the `ab-test.worker.ts` which uses an engagement scoring formula `(Opened*2 + Clicked*5 + Purchased*10)` to select a winning variant autonomously after a 15-second dynamic sampling delay.
+- **Sentiment Analysis & Compliance Engine**: The `callback.worker.ts` now routes incoming `REPLIED` webhooks to Gemini. If the payload text is classified as an `OPT_OUT`, the user's global `dnd` flag is immediately toggled to maintain compliance.
+- **AI Rate Limit Handling (BullMQ `DelayedError`)**: When Gemini returns a 429 rate-limit error during sentiment analysis, the AI service throws a custom `AIRateLimitError`. The Callback Worker catches this and throws BullMQ's native `DelayedError(15000)`, which instantly frees the worker thread and re-enqueues the job in Redis to retry 15 seconds later. No threads are blocked, no memory is wasted.
+- **Dispatch Worker Production Fix**: Fixed a critical bug where all dispatch jobs failed silently in production because the Channel Simulator URL was hardcoded to `localhost:4001`. The URL is now resolved at runtime via the `CHANNEL_SIMULATOR_URL` environment variable, enabling the CRM and Simulator to run as decoupled cloud services.
+- **Campaign Payload Optimization**: Fixed a critical `Network Error` caused by loading massive relational trees (`campaign -> communications -> events`) for large segments. The `getCampaignById` endpoint now uses Prisma nested pagination (`take: 15` on communications) to keep the JSON payload lightning fast and prevent Node.js memory crashes.
+- **Server-Side Customer Search**: Refactored the `/customers` endpoint to accept a `?query=` parameter, utilizing Prisma's `contains` filter (case-insensitive) to search across millions of records efficiently, limiting returns to `take: 50`.
+- **Accurate Analytics Aggregation**: Replaced naive array-length counting on the frontend with a highly optimized `GET /stats` API that uses native Prisma `COUNT()` operations directly on the database level, bypassing the 50-item network payload limit and ensuring accurate global dashboard metrics.
+- **Production Resilience**: Hardened Redis connections for Upstash Serverless compatibility (adding TLS and keepAlive to prevent `ECONNRESET`), implemented dynamic port binding (`process.env.PORT`) for Render, added root health-check endpoints, and wrote an idempotent database seed script (`prisma/seed.ts`) that runs safely during cloud deployments.
+
+## ☁️ Production Deployment (Render + Neon + Upstash)
+
+This backend is configured for deployment on **Render** using serverless databases.
+
+1. **Root Directory:** `apps/crm`
+2. **Databases Required:** 
+   - A Postgres database from **Neon**
+   - A Redis database from **Upstash** (ensure you use the `rediss://default:` protocol prefix for TLS).
+3. **Build Command:** 
+   ```bash
+   npm install && npx prisma generate && npx prisma db push && npx tsx prisma/seed.ts
+   ```
+   *(Note: The seed script contains a safety check and will safely skip if data already exists).*
+4. **Start Command:** `npm run start`
+5. **Environment Variables:**
+   - `DATABASE_URL`
+   - `REDIS_URL`
+   - `GEMINI_API_KEY`
+   - `CHANNEL_SIMULATOR_URL` — **Required for production!** Set this to your deployed Channel Simulator Render URL (e.g. `https://<your-simulator>.onrender.com`). Without this, all dispatch jobs will fail silently.
+
+## 📦 Setup & Installation
+
+```bash
+cd apps/crm
+npm install
+```
+
+Configure your environment variables in `.env`:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/xeno_crm?schema=public"
+REDIS_HOST="127.0.0.1"
+REDIS_PORT=6379
+GEMINI_API_KEY="your_google_api_key_here"
+```
+
+Initialize the database and seed it with dummy data:
+```bash
+npx prisma db push
+npx prisma generate
+npm run prisma:seed
+```
+
+## 🏃‍♂️ Running the Service
+
+```bash
+npm run dev
+```
+
+You should see:
+```bash
+> CRM running on 4000
+```
+
+You can view the active Redis queues at `http://localhost:4000/admin/queues`.
