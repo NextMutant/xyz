@@ -62,7 +62,7 @@ export default function DashboardPage() {
     >
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#222] mb-8">
         <div>
-          <h1 className="text-xl font-medium tracking-tight" suppressHydrationWarning>{greeting}, Sheersh</h1>
+          <h1 className="text-xl font-medium tracking-tight" suppressHydrationWarning>{greeting}, Uttaran</h1>
           <p className="text-sm text-[#A0A0A0] mt-1">Here is your automated daily summary.</p>
         </div>
         <Link href="/campaigns/new">
