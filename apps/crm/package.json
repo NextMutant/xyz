@@ -24,7 +24,8 @@
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "start": "npx tsx src/index.ts"
-  }
+  "dev": "tsx watch src/index.ts",
+  "start": "npx tsx src/index.ts",
+  "postinstall": "prisma generate"
+}
 }
