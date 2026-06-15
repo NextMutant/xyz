@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #000000;
-  --color-foreground: #EDEDED;
-  --color-muted: #111111;
-  --color-muted-foreground: #A0A0A0;
-  --color-border: #222222;
-  --color-card: #0A0A0A;
-  --color-card-foreground: #EDEDED;
-  --color-primary: #EDEDED;
-  --color-primary-foreground: #000000;
-  --color-secondary: #1A1A1A;
-  --color-secondary-foreground: #EDEDED;
+  --color-background: #FFFFFF;
+  --color-foreground: #000000;
+  --color-muted: #F4F4F5;
+  --color-muted-foreground: #71717A;
+  --color-border: #E4E4E7;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #000000;
+  --color-primary: #000000;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F4F4F5;
+  --color-secondary-foreground: #18181B;
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-danger: #EF4444;
@@ -21,25 +21,25 @@
 
 @layer base {
   :root {
-    --background: #000000;
-    --foreground: #EDEDED;
-    --card: #0A0A0A;
-    --card-foreground: #EDEDED;
-    --popover: #0A0A0A;
-    --popover-foreground: #EDEDED;
-    --primary: #EDEDED;
-    --primary-foreground: #000000;
-    --secondary: #1A1A1A;
-    --secondary-foreground: #EDEDED;
-    --muted: #111111;
-    --muted-foreground: #A0A0A0;
-    --accent: #222222;
-    --accent-foreground: #EDEDED;
+    --background: #FFFFFF;
+    --foreground: #000000;
+    --card: #FFFFFF;
+    --card-foreground: #000000;
+    --popover: #FFFFFF;
+    --popover-foreground: #000000;
+    --primary: #000000;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F4F4F5;
+    --secondary-foreground: #18181B;
+    --muted: #F4F4F5;
+    --muted-foreground: #71717A;
+    --accent: #F4F4F5;
+    --accent-foreground: #18181B;
     --destructive: #EF4444;
     --destructive-foreground: #FFFFFF;
-    --border: #222222;
-    --input: #222222;
-    --ring: rgba(237, 237, 237, 0.2);
+    --border: #E4E4E7;
+    --input: #E4E4E7;
+    --ring: rgba(0, 0, 0, 0.1);
     --radius: 0.375rem; /* 6px - sharp but not perfectly square */
   }
 
@@ -74,10 +74,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #222;
+  background: #E4E4E7;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: #D4D4D8;
 }

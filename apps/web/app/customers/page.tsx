@@ -51,24 +51,24 @@ export default function CustomersPage() {
 
   return (
     <div className="p-8 space-y-8 max-w-[1200px] mx-auto">
-      <div className="pb-4 border-b border-[#222]">
+      <div className="pb-4 border-b border-border">
         <h1 className="text-xl font-medium tracking-tight">Customers</h1>
-        <p className="text-sm text-[#A0A0A0] mt-1">Manage your entire audience directory.</p>
+        <p className="text-sm text-muted-foreground mt-1">Manage your entire audience directory.</p>
       </div>
 
       <div className="flex items-center space-x-2">
         <Input 
           placeholder="Search by name, email, or city..." 
-          className="max-w-sm bg-[#000] border-[#222] focus-visible:ring-[#EDEDED]" 
+          className="max-w-sm bg-background border-border focus-visible:ring-ring" 
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      <div className="rounded-md border border-[#222] bg-[#0A0A0A] overflow-hidden">
+      <div className="rounded-md border border-border bg-card overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-[#222] bg-[#0A0A0A] hover:bg-[#0A0A0A]">
+            <TableRow className="border-b border-border bg-card hover:bg-card">
               <TableHead>Name</TableHead>
               <TableHead>City</TableHead>
               <TableHead>Total Spend</TableHead>
@@ -85,12 +85,12 @@ export default function CustomersPage() {
               <TableRow key={c.id} onClick={() => setSelectedCustomer(c)} className="cursor-pointer">
                 <TableCell className="font-medium text-[13px]">
                   <div>{c.name}</div>
-                  <div className="text-[11px] text-[#A0A0A0] font-normal">{c.email}</div>
+                  <div className="text-[11px] text-muted-foreground font-normal">{c.email}</div>
                 </TableCell>
                 <TableCell className="text-[13px]">{c.city || '—'}</TableCell>
                 <TableCell className="text-[13px]">${Number(c.totalSpend).toFixed(2)}</TableCell>
                 <TableCell className="text-[13px]">{c.orderCount}</TableCell>
-                <TableCell className="text-[#A0A0A0] text-[13px]">
+                <TableCell className="text-muted-foreground text-[13px]">
                   {c.lastOrderDate ? format(new Date(c.lastOrderDate), 'MMM d, yyyy') : '—'}
                 </TableCell>
               </TableRow>
@@ -100,43 +100,43 @@ export default function CustomersPage() {
       </div>
 
       <Dialog open={!!selectedCustomer} onOpenChange={(open) => !open && setSelectedCustomer(null)}>
-        <DialogContent className="max-w-2xl bg-[#0A0A0A] border-[#222] text-[#EDEDED]">
+        <DialogContent className="max-w-2xl bg-card border-border text-foreground">
           <DialogHeader>
             <DialogTitle>{selectedCustomer?.name}</DialogTitle>
-            <DialogDescription className="text-[#A0A0A0]">{selectedCustomer?.email} • {selectedCustomer?.phone}</DialogDescription>
+            <DialogDescription className="text-muted-foreground">{selectedCustomer?.email} • {selectedCustomer?.phone}</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-2 gap-4 py-4">
             <div className="space-y-1">
-              <span className="text-[10px] text-[#A0A0A0] uppercase tracking-wider font-semibold">Total Spend</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Total Spend</span>
               <p className="font-medium text-sm">${Number(selectedCustomer?.totalSpend).toFixed(2)}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-[10px] text-[#A0A0A0] uppercase tracking-wider font-semibold">Order Count</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Order Count</span>
               <p className="font-medium text-sm">{selectedCustomer?.orderCount}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-[10px] text-[#A0A0A0] uppercase tracking-wider font-semibold">Average Order Value</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Average Order Value</span>
               <p className="font-medium text-sm">${Number(selectedCustomer?.avgOrderValue).toFixed(2)}</p>
             </div>
             <div className="space-y-1">
-              <span className="text-[10px] text-[#A0A0A0] uppercase tracking-wider font-semibold">City</span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">City</span>
               <p className="font-medium text-sm">{selectedCustomer?.city || '—'}</p>
             </div>
           </div>
           
           <div className="mt-4">
-            <h4 className="text-[10px] font-semibold mb-2 border-b border-[#222] pb-2 uppercase tracking-wider text-[#A0A0A0]">Order History</h4>
+            <h4 className="text-[10px] font-semibold mb-2 border-b border-border pb-2 uppercase tracking-wider text-muted-foreground">Order History</h4>
             {selectedCustomer?.orders?.length > 0 ? (
               <ul className="space-y-2 max-h-32 overflow-y-auto pr-2">
                 {selectedCustomer.orders.map((o: any) => (
                   <li key={o.id} className="text-[13px] flex justify-between">
                     <span>{o.category}</span>
-                    <span className="text-[#A0A0A0]">${Number(o.amount).toFixed(2)}</span>
+                    <span className="text-muted-foreground">${Number(o.amount).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-[13px] text-[#555]">No orders found.</p>
+              <p className="text-[13px] text-muted-foreground">No orders found.</p>
             )}
           </div>
         </DialogContent>

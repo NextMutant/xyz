@@ -84,9 +84,9 @@ export default function SegmentsPage() {
       transition={{ duration: 0.4 }}
       className="p-8 max-w-[800px] mx-auto space-y-8 h-full flex flex-col"
     >
-      <div className="pb-4 border-b border-[#222]">
+      <div className="pb-4 border-b border-border">
         <h1 className="text-xl font-medium tracking-tight">Audience Builder</h1>
-        <p className="text-sm text-[#A0A0A0] mt-1">Describe your audience in plain english. The AI will do the rest.</p>
+        <p className="text-sm text-muted-foreground mt-1">Describe your audience in plain english. The AI will do the rest.</p>
       </div>
 
       <div className="flex-1 flex flex-col gap-6">
@@ -97,14 +97,14 @@ export default function SegmentsPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="space-y-6"
           >
-            <div className="border border-[#222] bg-[#050505] p-6 lg:p-8 rounded-md">
-              <div className="flex items-center gap-2 mb-6 text-[#EDEDED]">
+            <div className="border border-border bg-card p-6 lg:p-8 rounded-md">
+              <div className="flex items-center gap-2 mb-6 text-foreground">
                 <BrainCircuit className="w-5 h-5" />
                 <h2 className="text-base font-medium tracking-tight">AI Understanding</h2>
               </div>
 
               <div className="space-y-4 mb-8">
-                <p className="text-[13px] text-[#A0A0A0]">I found customers who:</p>
+                <p className="text-[13px] text-muted-foreground">I found customers who:</p>
                 <ul className="space-y-3">
                   {checklist.map((item, i) => (
                     <motion.li 
@@ -112,27 +112,27 @@ export default function SegmentsPage() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.1 * i }}
                       key={i} 
-                      className="flex items-center gap-3 text-[14px] text-[#EDEDED]"
+                      className="flex items-center gap-3 text-[14px] text-foreground"
                     >
-                      <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                      <CheckCircle2 className="w-4 h-4 text-success" />
                       {item}
                     </motion.li>
                   ))}
                 </ul>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-[#222]">
+              <div className="grid grid-cols-2 gap-4 pt-6 border-t border-border">
                 <div>
-                  <p className="text-[11px] text-[#A0A0A0] uppercase tracking-wider font-semibold mb-1">Estimated Reach</p>
-                  <p className="text-xl font-medium text-[#EDEDED] flex items-center gap-2">
-                    <Users className="w-4 h-4 text-[#555]" />
+                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Estimated Reach</p>
+                  <p className="text-xl font-medium text-foreground flex items-center gap-2">
+                    <Users className="w-4 h-4 text-muted-foreground" />
                     {segmentData.audienceSize} users
                   </p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-[#A0A0A0] uppercase tracking-wider font-semibold mb-1">Recommended Strategy</p>
-                  <p className="text-[14px] text-[#EDEDED] flex items-center gap-2 mt-1">
-                    <Lightbulb className="w-4 h-4 text-[#555]" />
+                  <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold mb-1">Recommended Strategy</p>
+                  <p className="text-[14px] text-foreground flex items-center gap-2 mt-1">
+                    <Lightbulb className="w-4 h-4 text-muted-foreground" />
                     {checklist.length > 2 ? 'Win-back Campaign' : 'Retention Campaign'}
                   </p>
                 </div>
@@ -141,7 +141,7 @@ export default function SegmentsPage() {
             
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setSegmentData(null)}>Reset</Button>
-              <Button onClick={handleSave} disabled={saving} className="bg-[#EDEDED] text-[#000] hover:bg-[#A0A0A0]">
+              <Button onClick={handleSave} disabled={saving} className="bg-primary text-primary-foreground hover:bg-primary/90">
                 {saving ? "Saving..." : "Save Segment"} <Save className="w-3.5 h-3.5 ml-2" />
               </Button>
             </div>
@@ -151,7 +151,7 @@ export default function SegmentsPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="border border-[#222] bg-[#050505] p-6 lg:p-8 rounded-md space-y-6"
+            className="border border-border bg-card p-6 lg:p-8 rounded-md space-y-6"
           >
             <div className="flex items-center gap-2">
               <Skeleton className="w-5 h-5 rounded" />
@@ -166,7 +166,7 @@ export default function SegmentsPage() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-[#222]">
+            <div className="grid grid-cols-2 gap-4 pt-6 border-t border-border">
               <div className="space-y-2">
                 <Skeleton className="h-2.5 w-28" />
                 <Skeleton className="h-7 w-24" />
@@ -178,13 +178,13 @@ export default function SegmentsPage() {
             </div>
           </motion.div>
         ) : (
-          <div className="flex-1 flex items-center justify-center border border-dashed border-[#222] rounded-md bg-[#050505]">
+          <div className="flex-1 flex items-center justify-center border border-dashed border-border rounded-md bg-card">
             <div className="text-center space-y-4 max-w-md p-8">
-              <div className="w-10 h-10 rounded border border-[#222] bg-[#000] flex items-center justify-center mx-auto">
-                <Sparkles className="w-5 h-5 text-[#EDEDED]" />
+              <div className="w-10 h-10 rounded border border-border bg-background flex items-center justify-center mx-auto">
+                <Sparkles className="w-5 h-5 text-foreground" />
               </div>
               <h3 className="text-sm font-medium">Who do you want to reach?</h3>
-              <p className="text-[13px] text-[#A0A0A0]">Try something like "customers in bangalore who spent more than 5000 and haven't purchased in 60 days"</p>
+              <p className="text-[13px] text-muted-foreground">Try something like "customers in bangalore who spent more than 5000 and haven't purchased in 60 days"</p>
             </div>
           </div>
         )}
@@ -195,7 +195,7 @@ export default function SegmentsPage() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Describe your audience..."
-              className="h-12 pr-12 text-sm bg-[#000] border-[#222] rounded-md focus-visible:ring-[#EDEDED]"
+              className="h-12 pr-12 text-sm bg-background border-border rounded-md focus-visible:ring-ring"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -205,7 +205,7 @@ export default function SegmentsPage() {
             />
             <Button 
               size="icon" 
-              className="absolute right-1.5 h-9 w-9 bg-[#222] hover:bg-[#333] border-0 text-[#EDEDED] transition-colors rounded"
+              className="absolute right-1.5 h-9 w-9 bg-secondary hover:bg-secondary/80 border-0 text-secondary-foreground transition-colors rounded"
               onClick={handleGenerate}
               disabled={loading || !prompt}
             >

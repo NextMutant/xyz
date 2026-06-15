@@ -13,11 +13,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button"
     
     const variants = {
-      default: "bg-white text-black hover:bg-neutral-200 border border-transparent font-medium shadow-sm",
-      secondary: "bg-[#111] text-white hover:bg-[#222] border border-[#333] transition-colors",
-      outline: "border border-[#333] bg-transparent hover:bg-[#111] text-white transition-colors",
-      ghost: "hover:bg-[#111] text-white transition-colors",
-      danger: "bg-[#EF4444] text-[#FFFFFF] hover:bg-[#DC2626] border border-[#B91C1C]",
+      default: "bg-black text-white hover:bg-black/90 border border-transparent font-medium shadow-sm",
+      secondary: "bg-secondary text-foreground hover:bg-secondary/80 border border-border transition-colors",
+      outline: "border border-border bg-transparent hover:bg-secondary text-foreground transition-colors",
+      ghost: "hover:bg-secondary text-foreground transition-colors",
+      danger: "bg-red-600 text-white hover:bg-red-700 border border-red-700",
     }
 
     const sizes = {
@@ -30,7 +30,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-[#000] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#EDEDED] focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center whitespace-nowrap rounded-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50",
           variants[variant],
           sizes[size],
           className
