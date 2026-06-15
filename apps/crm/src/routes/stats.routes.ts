@@ -6,19 +6,30 @@ const prisma = new PrismaClient();
 
 router.get("/", async (req, res) => {
   try {
-    const totalCustomers = await prisma.customer.count();
-    const totalOrders = await prisma.order.count();
-    const totalCampaigns = await prisma.campaign.count();
-    const activeCampaigns = await prisma.campaign.count({
-      where: { status: 'RUNNING' }
-    });
-    const dndCustomers = await prisma.customer.count({
-      where: { dnd: true }
-    });
+    const [
+      totalCustomers,
+      totalOrders,
+      totalCampaigns,
+      activeCampaigns,
+      dndCustomers,
+      revenueResult
+    ] = await Promise.all([
+      prisma.customer.count(),
+      prisma.order.count(),
+      prisma.campaign.count(),
+      prisma.campaign.count({ where: { status: 'RUNNING' } }),
+      prisma.customer.count({ where: { dnd: true } }),
+      prisma.order.aggregate({
+        _sum: {
+          amount: true
+        }
+      })
+    ]);
 
     res.json({
       totalCustomers,
       totalOrders,
+      totalRevenue: Number(revenueResult._sum.amount || 0),
       totalCampaigns,
       activeCampaigns,
       dndCustomers

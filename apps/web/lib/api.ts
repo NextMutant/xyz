@@ -4,16 +4,37 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
 });
 
+export interface DashboardStats {
+  totalCustomers: number;
+  totalOrders: number;
+  totalRevenue: number;
+  totalCampaigns: number;
+  activeCampaigns: number;
+  dndCustomers: number;
+}
+
+export interface Campaign {
+  id: string;
+  name: string;
+  segmentId: string;
+  segment?: { name: string };
+  message: string;
+  channel: string;
+  status: "DRAFT" | "QUEUED" | "RUNNING" | "COMPLETED" | "FAILED";
+  aiInsight?: string;
+  createdAt: string;
+}
+
 // Customers
 export const getCustomers = async (query?: string) => (await api.get("/customers", { params: { query } })).data;
-export const getDashboardStats = async () => (await api.get("/stats")).data;
+export const getDashboardStats = async (): Promise<DashboardStats> => (await api.get("/stats")).data;
 
 // Segments
 export const getSegments = async () => (await api.get("/segments")).data;
 
 // Campaigns
-export const getCampaigns = async () => (await api.get("/campaigns")).data;
-export const getCampaignById = async (id: string) => (await api.get(`/campaigns/${id}`)).data;
+export const getCampaigns = async (): Promise<Campaign[]> => (await api.get("/campaigns")).data;
+export const getCampaignById = async (id: string): Promise<Campaign> => (await api.get(`/campaigns/${id}`)).data;
 export const createCampaign = async (data: any) => (await api.post("/campaigns", data)).data;
 export const deleteCampaign = async (id: string) => (await api.delete(`/campaigns/${id}`)).data;
 export const launchCampaign = async (id: string) => (await api.post(`/campaigns/${id}/launch`)).data;

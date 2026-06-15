@@ -7,15 +7,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton, SkeletonTableRow } from "@/components/ui/Skeleton";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid } from "recharts";
-import { getDashboardStats, getCampaigns } from "@/lib/api";
+import { getDashboardStats, getCampaigns, type DashboardStats, type Campaign } from "@/lib/api";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/Button";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashboardPage() {
-  const [stats, setStats] = useState({ customers: 0, orders: 0, campaigns: 0, activeCampaigns: 0, dndCustomers: 0 });
-  const [campaigns, setCampaigns] = useState<any[]>([]);
+  const [stats, setStats] = useState<DashboardStats & { orders: number, customers: number, campaigns: number }>({ 
+    totalCustomers: 0, 
+    totalOrders: 0, 
+    totalRevenue: 0, 
+    totalCampaigns: 0, 
+    activeCampaigns: 0, 
+    dndCustomers: 0,
+    orders: 0,
+    customers: 0,
+    campaigns: 0
+  });
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBrief, setShowBrief] = useState(true);
   const [hoverArea, setHoverArea] = useState(false);
@@ -30,11 +40,10 @@ export default function DashboardPage() {
       try {
         const [statsData, campData] = await Promise.all([getDashboardStats(), getCampaigns()]);
         setStats({
+          ...statsData,
           customers: statsData.totalCustomers,
           orders: statsData.totalOrders,
           campaigns: statsData.totalCampaigns,
-          activeCampaigns: statsData.activeCampaigns,
-          dndCustomers: statsData.dndCustomers || 0,
         });
         setCampaigns(campData.slice(0, 5)); // Top 5
       } catch (err) {
@@ -150,7 +159,24 @@ export default function DashboardPage() {
       </AnimatePresence>
 
       {/* STANDARD STATS ROW */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-muted-foreground">Total Revenue</CardTitle>
+            <Activity className="w-3.5 h-3.5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-medium">
+              ${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1 flex items-center">
+              <span className="text-success flex items-center mr-1">
+                <ArrowUpRight className="w-3 h-3 mr-0.5" /> 15%
+              </span> 
+              growth
+            </p>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-muted-foreground">Total Customers</CardTitle>
