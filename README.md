@@ -38,8 +38,9 @@ queue          queue
 ┌──────────────────────────────┐
 │  Channel Simulator  (:4001)  │
 │  Mock Twilio/SendGrid        │
-│  Fires: SENT/DELIVERED/      │
-│         OPENED/FAILED        │
+│  Fires: SENT/DELIVERED/OPENED/│
+│  CLICKED/PURCHASED/FAILED/   │
+│  REPLIED                     │
 └──────────┬───────────────────┘
            │ Webhook POST
            ▼
